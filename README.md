@@ -5,7 +5,7 @@ How it works:
 	
 	pip install flask flask-cors nudenet opencv-python pillow Flask-Limiter Flask-Caching
      
-	 and run
+	 run
    
 2) Ngrok:
           Create account
@@ -23,3 +23,6 @@ How it works:
    update wherever it has URLs like:
 	
 	 https://***.ngrok-free.app/
+
+5)Enable developer options in chromium browsers (won't work on Mozzila)
+	Load the whole folder
