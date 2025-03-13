@@ -25,4 +25,5 @@ How it works:
 	 https://***.ngrok-free.app/
 
 5) Enable developer options in chromium browsers (won't work on Mozzila)
-	Load the whole folder (Enable/Disable checkboxes don't work for now)
+
+   Load the whole folder (Enable/Disable checkboxes don't work for now)
