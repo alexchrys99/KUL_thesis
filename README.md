@@ -3,7 +3,7 @@ How it works:
      download dependencies:  pip install flask flask-cors nudenet opencv-python pillow Flask-Limiter Flask-Caching
      and run
    
-2)Ngrok:
+2) Ngrok:
           Create account
           download : https://ngrok.com/downloads/windows?tab=download
            type: ngrok config add-authtoken <token>
