@@ -1,3 +1,7 @@
+NSFW & ADs filtering browser extension
+
+
+
 How it works:
 
 1) For the script test_ext_ads:
