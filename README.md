@@ -5,7 +5,7 @@ How it works:
 	
 	pip install flask flask-cors nudenet opencv-python pillow Flask-Limiter Flask-Caching
      
-	 run (it will download images in the computer in the current folder of the script)
+	 run (choose version if you want download images or not, the images will be saved in the current folder of the script)
    
 2) Ngrok:
           Create account
