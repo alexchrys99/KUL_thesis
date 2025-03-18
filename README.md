@@ -31,3 +31,7 @@ How it works:
 5) Enable developer options in chromium browsers (won't work on Mozzila)
 
    Load the whole folder (Enable/Disable checkboxes don't work for now)
+
+
+
+PS:   v0.4 is with adblocking rules for blocking youtube ads (In first videos it might show some ads but after initialize, almost never shows ads), gambling sites, porn sites
