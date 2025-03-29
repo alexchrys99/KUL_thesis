@@ -13,11 +13,22 @@ CORS(app)  # Enable CORS for all routes
 # Initialize the NudeDetector
 detector = NudeDetector()
 
-# Set the default threshold value
-THRESHOLD = 0.5  # Adjust this value as needed
+# Initialize threshold with a default value
+THRESHOLD = 0.4
 
-@app.route('/predict', methods=['POST'])
+
+
+@app.route('/predict', methods=['POST', 'OPTIONS'])
 def predict():
+    if request.method == 'OPTIONS':
+        # Handle preflight request
+        response = jsonify({"status": "ok"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Private-Network", "true")
+        return response, 200
+
     try:
         # Get the base64 image data from the request
         base64_image = request.json['base64_image']
@@ -26,7 +37,6 @@ def predict():
         # Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
         try:
             header, base64_data = base64_image.split(',', 1)
-            image_format = header.split('/')[1].split(';')[0].lower()  # Extract format
         except ValueError:
             print("Invalid base64 format: missing header.")
             return jsonify({"error": "Invalid base64 format"}), 400
@@ -51,13 +61,16 @@ def predict():
         try:
             results = detector.detect(image)
             nsfw_classes = [
-                'FEMALE_BREAST_EXPOSED', 'FEMALE_GENITALIA_EXPOSED', 'MALE_GENITALIA_EXPOSED',
-                'FEMALE_BREAST_COVERED', 'FEMALE_BUTTOCKS_EXPOSED', 'MALE_BUTTOCKS_EXPOSED',
-                'FEMALE_GENITALIA_COVERED', 'MALE_GENITALIA_COVERED',
-                'FEMALE_NIPPLE_EXPOSED', 
-                'FEMALE_CLEAVAGE_VISIBLE', 'FEMALE_UNDERWEAR_EXPOSED', 'MALE_UNDERWEAR_EXPOSED',
-                'FEMALE_SPORTS_BRA',  'BIKINI', 'FEMALE_CLEAVAGE_VISIBLE','ANUS_EXPOSED',
+                #WOMAN BODY PARTS
+                'FEMALE_BREAST_EXPOSED', 'FEMALE_GENITALIA_EXPOSED', 
+                'FEMALE_BUTTOCKS_EXPOSED', 'FEMALE_GENITALIA_COVERED','FEMALE_NIPPLE_EXPOSED', 
+                'FEMALE_UNDERWEAR_EXPOSED', 
+                'BIKINI', 'FEMALE_CLEAVAGE_VISIBLE','ANUS_EXPOSED',
                 'BUTTOCKS_COVERED', 'ANUS_COVERED'
+                
+                #MAN BODY PARTS
+                'MALE_GENITALIA_COVERED','MALE_BUTTOCKS_EXPOSED','MALE_GENITALIA_EXPOSED',
+                'MALE_UNDERWEAR_EXPOSED',
             ]
 
             nsfw_detected = any(
@@ -65,17 +78,18 @@ def predict():
                 for result in results
             )
             print(f"NSFW detected: {nsfw_detected}")
+            
+            return jsonify({
+                "prediction": "NSFW" if nsfw_detected else "SFW",
+                "current_threshold": THRESHOLD
+            })
+
         except Exception as e:
             print(f"Error detecting NSFW content: {e}")
             return jsonify({"error": str(e)}), 500
 
-        return jsonify({
-            "prediction": "NSFW" if nsfw_detected else "SFW"
-        })
-
     except Exception as e:
         print(f"Unexpected error: {e}")
         return jsonify({"error": str(e)}), 500
-
 if __name__ == '__main__':
     app.run(port=5000, debug=True)  # Run in debug mode for detailed logs
