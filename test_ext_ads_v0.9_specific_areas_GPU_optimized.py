@@ -17,7 +17,6 @@ import re
 from statistics import mean
 from collections import defaultdict
 
-# Add global variables for tracking
 processing_times = []
 total_images_processed = 0
 category_stats = defaultdict(int)
