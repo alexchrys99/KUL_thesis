@@ -11,7 +11,7 @@ How it works:
      
 	 run (choose version if you want download images or not, the images will be saved in specific folder change the path
    
-2) Ngrok:
+2) Ngrok (simpler than cloudflare):
           Create account
           download : https://ngrok.com/downloads/windows?tab=download
 
@@ -41,3 +41,6 @@ How it works:
 
 
 v0.7 blocks porn/bet sites and most of youtube adds, dynamic addition of sites to block
+
+
+v0.9 dark theme, counter of filtered images
