@@ -7,11 +7,11 @@ How it works:
 1) For the script test_ext_ads:
      download dependencies: 
 	
-	pip install flask flask-cors nudenet opencv-python pillow Flask-Limiter Flask-Caching
+	pip install flask flask-cors nudenet opencv-python pillow Flask-Limiter Flask-Caching torch torch-directml numpy
      
-	 run (choose version if you want download images or not, the images will be saved in the current folder of the script)
+	 run (choose version if you want download images or not, the images will be saved in specific folder change the path
    
-2) Ngrok:
+2) Ngrok (simpler than cloudflare):
           Create account
           download : https://ngrok.com/downloads/windows?tab=download
 
@@ -34,4 +34,13 @@ How it works:
 
 
 
-PS:   v0.4 is with adblocking rules for blocking youtube ads (In first videos it might show some ads but after initialize, almost never shows ads), gambling sites, porn sites
+
+ 
+ 
+ v0.4 is with adblocking rules for blocking youtube ads (In first videos it might show some ads but after initialize, almost never shows ads), gambling sites, porn sites
+
+
+v0.7 blocks porn/bet sites and most of youtube adds, dynamic addition of sites to block
+
+
+v0.9 dark theme, counter of filtered images
