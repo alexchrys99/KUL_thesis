@@ -7,9 +7,9 @@ How it works:
 1) For the script test_ext_ads:
      download dependencies: 
 	
-	pip install flask flask-cors nudenet opencv-python pillow Flask-Limiter Flask-Caching
+	pip install flask flask-cors nudenet opencv-python pillow Flask-Limiter Flask-Caching torch torch-directml numpy
      
-	 run (choose version if you want download images or not, the images will be saved in the current folder of the script)
+	 run (choose version if you want download images or not, the images will be saved in specific folder change the path
    
 2) Ngrok:
           Create account
