@@ -135,11 +135,12 @@ def get_site_specific_thresholds(source_url, page_title=''):
             NSFW_THRESHOLDS['COVERED']['threshold'], 
             'Default')
 
-# Create directory structure
-BASE_DIR = "C:/Users/alexc/Desktop/vsfiles/for_live_browsing/adblock_nsfw_test/some_tests_ext_thr/custom_test_2"
+# Create directory structure relative to script location
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.join(SCRIPT_DIR, "processed_images")
 for category in ['images', 'thumbnails']:
     for subcategory in ['original', 'sfw', 'nsfw']:
-        os.makedirs(f"{BASE_DIR}/{category}/{subcategory}", exist_ok=True)
+        os.makedirs(os.path.join(BASE_DIR, category, subcategory), exist_ok=True)
 
 def get_next_image_number(directory):
     existing_files = [f for f in os.listdir(directory) if f.endswith(('.jpg', '.jpeg', '.png'))]
@@ -265,15 +266,15 @@ def predict():
             category = "thumbnails" if is_thumb else "images"
             
             # Get next number for consistent naming
-            next_number = get_next_image_number(f"{BASE_DIR}/{category}/original")
+            next_number = get_next_image_number(os.path.join(BASE_DIR, category, "original"))
             
             # Save original
-            original_path = f"{BASE_DIR}/{category}/original/{next_number}.{image_extension}"
+            original_path = os.path.join(BASE_DIR, category, "original", f"{next_number}.{image_extension}")
             cv2.imwrite(original_path, cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR))
 
             # Save categorized image
             target_folder = "nsfw" if is_nsfw else "sfw"
-            target_path = f"{BASE_DIR}/{category}/{target_folder}/{next_number}.{image_extension}"
+            target_path = os.path.join(BASE_DIR, category, target_folder, f"{next_number}.{image_extension}")
             cv2.imwrite(target_path, cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR))
 
             # Calculate processing time and update statistics
@@ -282,23 +283,22 @@ def predict():
             total_images_processed += 1
 
             result = {
-            "prediction": "NSFW" if is_nsfw else "SFW",
-            "details": {
-                "nsfw_detected": is_nsfw,
-                "detections": detections,
-                "category": category,
-                "thresholds_used": {
-                    "exposed": exposed_threshold,
-                    "covered": covered_threshold
-                },
-                "saved_paths": {
-                    "original": original_path,
-                    "categorized": target_path
-                },
-                "processing_time": f"{processing_time:.2f} seconds"
+                "prediction": "NSFW" if is_nsfw else "SFW",
+                "details": {
+                    "nsfw_detected": is_nsfw,
+                    "detections": detections,
+                    "category": category,
+                    "thresholds_used": {
+                        "exposed": exposed_threshold,
+                        "covered": covered_threshold
+                    },
+                    "saved_paths": {
+                        "original": original_path,
+                        "categorized": target_path
+                    },
+                    "processing_time": f"{processing_time:.2f} seconds"
+                }
             }
-        }
-
            
             return jsonify(result)
 
@@ -323,4 +323,4 @@ if __name__ == '__main__':
     
     print(f"Running with device: {device}")
     print("Press Ctrl+C to stop the server and see statistics")
-    app.run(port=5000, debug=True) 
+    app.run(port=5000, debug=True)
