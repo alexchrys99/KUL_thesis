@@ -44,3 +44,5 @@ v0.7 blocks porn/bet sites and most of youtube adds, dynamic addition of sites t
 
 
 v0.9 dark theme, counter of filtered images
+
+V1.0 adds an extra layer of protection by forcing safe search filters in youtube, or google
