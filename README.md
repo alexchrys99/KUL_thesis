@@ -51,4 +51,4 @@ v1.0 adds an extra layer of protection by forcing safe search filters in youtube
 
 v1.1 bugs(mainly with the counters) fixed 
 
-"settimeout=0"(constant requests from API) 
+"settimeout=0"(continuousrequests from API) 
