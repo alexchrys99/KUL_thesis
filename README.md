@@ -49,6 +49,6 @@ v1.0 adds an extra layer of protection by forcing safe search filters in youtube
 
 
 
-v1.1 bugs(mainly with the counters) fixed 
+v1.1 bugs(mainly with the counters)  
 
-"settimeout=0"(continuousrequests from API) 
+"settimeout=0"(continuousrequests from API) it will deplete very fast the free plans of Cloudflared/Ngrok
