@@ -54,4 +54,4 @@ v1.2 Limits are depleted in a few minutes due to API requests
 
 
 
-v1.4 simplified version: removed unnecessary non-functional buttons, corrected bugs (improved DOM logic). Cloudflare works better now, but be careful with the limits
+v1.4 simplified version: removed unnecessary non-functional buttons, corrected bugs (improved DOM logic). Cloudflare works better now, but be careful with the limits. Prevented deactivation of 'Safe Search'.
