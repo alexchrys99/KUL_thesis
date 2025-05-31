@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>AdBlock + NSFW Filter</h2>
+        <div class="toggle-container">
+            <span class="toggle-label">Safe Search Enforcer</span>
+            <label class="switch">
+                <input type="checkbox" id="safeSearchToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <button id="exportButton">Export Page Load Times</button>
+        <button id="exportBlurTimeButton">Export Blur Times</button>
+        <button id="exportBlurStatsButton">Export Blur Stats</button>
+        <button id="blocklistButton">Blocklist</button>
+        <button id="exportFirstProcessingButton">Export First Processing Times</button>
+        <div id="blocklistSection" style="display: none;">
+            <ul id="blockedSitesList"></ul>
+            <button id="unblockButton">Unblock Selected</button>
+            <input type="text" id="blockSiteInput" placeholder="Enter site URL to block">
+            <button id="blockSiteButton">Block Site</button>
+        </div>
+        <p id="status"></p>
+        <script src="popup.js"></script>
+    </div>
+</body>
+</html>
+
