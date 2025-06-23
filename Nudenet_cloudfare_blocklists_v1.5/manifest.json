@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "AdBlock + NSFW Filter",
+  "version": "1.0",
+  "description": "Blocks ads and detects/blurs NSFW images on webpages.",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "https://4266-2a02-85f-ec74-d400-e418-eeb5-7824-8cf0.ngrok-free.app/"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
