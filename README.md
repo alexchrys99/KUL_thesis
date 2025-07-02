@@ -59,3 +59,11 @@ v1.4 simplified version: removed unnecessary non-functional buttons, corrected b
 
 v1.5 Removed Ad-blocking, only necessary parts for detection of visual elements of NSFW elements
 
+
+v1.6 removal of extra code Erax_AI_extension_1.6
+
+The script Erax_AI_model_1.1.py contains the logic of 3 mechanisms for context (apply dynamically low threshold)
+
+1) dangerous domains
+2) dangerous alt-text
+3) if model detects a class with a high ,reliability then the website becomes dangerouus
