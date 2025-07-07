@@ -21,7 +21,6 @@ from ultralytics import YOLO
 from huggingface_hub import snapshot_download
 
 # +++ ADDED FOR CONTROL FLAGS +++
-# Master controls to easily enable or disable context-aware features
 ENABLE_DOMAIN_RULES = False       # Set to False to disable URL/title-based threshold adjustments
 ENABLE_UNSAFE_WORD_CHECK = False   # Set to False to disable alt_text/caption keyword checking
 # +++++++++++++++++++++++++++++++
@@ -33,7 +32,7 @@ category_stats = defaultdict(int)
 model = None # Placeholder for the loaded YOLO model
 
 # Configuration for EraX Model
-ERAX_MODEL_REPO_ID = "erax-ai/EraX-NSFW-V1.0"    
+ERAX_MODEL_REPO_ID = "erax-ai/EraX-NSFW-V1.0"
 ERAX_MODEL_FILENAME = "erax_nsfw_yolo11n.pt"  # Nano version selected
 ERAX_MODEL_LOCAL_DIR = "./erax_model_cache"
 
@@ -103,7 +102,7 @@ def load_erax_nsfw_model():
             sys.exit(1)
     else:
         print(f"Found existing EraX model: {model_path}")
-    
+
     try:
         print(f"Loading EraX NSFW model from: {model_path}")
         # Force CPU mode to avoid DirectML issues
@@ -122,12 +121,6 @@ SITE_SPECIFIC_RULES = [
         'title_pattern': r'(?i)(porn|xxx|adult|nsfw|sex|explicit|18\+|milf|dick|boob|hentai)',
         'category': 'Adult Domain',
         'threshold': 0.005
-    },
-    {
-        'pattern': r'(?i)(instagram\.com|tiktok\.com|facebook\.com|twitter\.com|x\.com|reddit\.com)',
-        'title_pattern': r'(?i)(model|fitness|workout|beach|swim|lingerie)',
-        'category': 'Social Media',
-        'threshold': 0.15
     }
 ]
 
@@ -149,7 +142,7 @@ def process_base64_image(base64_image):
     else:
         base64_data = base64_image
         image_format = 'png'
-    
+
     padding = len(base64_data) % 4
     if padding:
         base64_data += '=' * (4 - padding)
@@ -157,9 +150,9 @@ def process_base64_image(base64_image):
         decoded_image = base64.b64decode(base64_data)
         image = Image.open(BytesIO(decoded_image))
         image_extension = "jpg" if image_format in ["jpeg", "jpg"] else image_format
-        
+
         image_np = np.array(image)
-        
+
         if len(image_np.shape) == 2:
             image_np = cv2.cvtColor(image_np, cv2.COLOR_GRAY2RGB)
         elif image_np.shape[-1] == 4:
@@ -191,6 +184,8 @@ def predict():
         page_title = data.get('page_title', '')
         alt_text = data.get('alt_text', '').lower()
         caption = data.get('caption', '').lower()
+        # <<< CHANGE 1: Check for escalation status from the extension
+        use_low_threshold = data.get('use_low_threshold', False)
         
         if not base64_image:
             return jsonify({"error": "No image data provided"}), 400
@@ -203,30 +198,34 @@ def predict():
             print(f"Error in image preprocessing: {e}")
             return jsonify({"error": str(e)}), 400
         
-        threshold = get_site_specific_threshold(source_url, page_title)
+        # <<< CHANGE 2: Apply low threshold if the page is already flagged as high-risk
+        if use_low_threshold:
+            threshold = UNSAFE_WORD_THRESHOLD 
+        else:
+            threshold = get_site_specific_threshold(source_url, page_title)
         
-        # +++ MODIFIED FOR REGEX AND CONTROL FLAG +++
+        escalate_flag = False
+
         if ENABLE_UNSAFE_WORD_CHECK:
             text_context = alt_text + " " + caption
             found_unsafe_word = None
             for pattern in UNSAFE_CONTEXT_PATTERNS:
                 match = re.search(pattern, text_context, re.IGNORECASE)
                 if match:
-                    found_unsafe_word = match.group(0) # Get the actual matched word
+                    found_unsafe_word = match.group(0)
                     threshold = min(threshold, UNSAFE_WORD_THRESHOLD)
-                    print(f"Unsafe keyword '{found_unsafe_word}' found via regex. Lowering threshold to {threshold}")
+                    # <<< CHANGE 3: Set escalate_flag to True if alt text contains a keyword
+                    escalate_flag = True
+                    print(f"Unsafe keyword '{found_unsafe_word}' found via regex. Lowering threshold to {threshold} and escalating.")
                     category_stats['Unsafe Word Trigger'] += 1
                     break
-        # +++++++++++++++++++++++++++++++
 
-        # Use try/except to handle the inference tensor error
         try:
             with torch.no_grad():
                 results = model(img_np, conf=threshold, verbose=False)
         except RuntimeError as e:
             if "Cannot set version_counter for inference tensor" in str(e):
                 print("Handling inference tensor error - trying with CPU copy")
-                # Create a copy of the image array to avoid the error
                 img_np_copy = img_np.copy()
                 results = model(img_np_copy, conf=threshold, verbose=False)
             else:
@@ -242,6 +241,10 @@ def predict():
                 detections.append({'class': cls_name, 'confidence': conf})
         
         is_nsfw, highest_conf, detected_class = check_nsfw(detections, threshold)
+
+        # <<< CHANGE 4: Escalate if the model's confidence is high
+        if highest_conf > 0.5:
+             escalate_flag = True
         
         is_thumb = is_thumbnail(img_np)
         category = "thumbnails" if is_thumb else "images"
@@ -265,6 +268,7 @@ def predict():
             return jsonify({
                 'prediction': 'NSFW', 'confidence': highest_conf, 'class': detected_class,
                 'processing_time': processing_time,
+                'escalate': escalate_flag,
                 'details': { 'nsfw_detected': True, 'category': category, 'threshold_used': threshold,
                              'saved_paths': { 'original': original_path, 'categorized': target_path } }
             })
@@ -273,6 +277,7 @@ def predict():
             print(f"SFW image - URL: {source_url} - Time: {processing_time:.2f}s")
             return jsonify({
                 'prediction': 'SFW', 'confidence': highest_conf, 'processing_time': processing_time,
+                'escalate': escalate_flag,
                 'details': { 'nsfw_detected': False, 'category': category, 'threshold_used': threshold,
                              'saved_paths': { 'original': original_path, 'categorized': target_path } }
             })
@@ -285,12 +290,9 @@ def predict():
         return jsonify({ 'error': str(e), 'prediction': 'ERROR', 'processing_time': processing_time })
 
 def get_site_specific_threshold(url, title):
-    # +++ MODIFIED FOR CONTROL FLAG +++
-    # If domain rules are disabled, immediately return the default threshold.
     if not ENABLE_DOMAIN_RULES:
         category_stats['Default (Domain Rules Disabled)'] += 1
         return DEFAULT_NSFW_THRESHOLD
-    # +++++++++++++++++++++++++++++++
 
     threshold = DEFAULT_NSFW_THRESHOLD
     
@@ -333,9 +335,7 @@ if __name__ == '__main__':
     load_erax_nsfw_model()
     
     print("Starting Flask server...")
-    # +++ ADDED FOR CONTROL FLAGS +++
     print(f"Domain-specific rules are {'ENABLED' if ENABLE_DOMAIN_RULES else 'DISABLED'}.")
     print(f"Unsafe word check is {'ENABLED' if ENABLE_UNSAFE_WORD_CHECK else 'DISABLED'}.")
-    # +++++++++++++++++++++++++++++++
     print("Press Ctrl+C to stop the server and see statistics")
     app.run(host='0.0.0.0', port=5000)
