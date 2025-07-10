@@ -56,33 +56,27 @@ CORS(app)
 # Define class-specific thresholds
 NSFW_THRESHOLDS = {
     'EXPOSED': {
-        'threshold': 0.25,
+        'threshold': 0.2,
         'classes': [
-            'FEMALE_BREAST_EXPOSED',
+             'FEMALE_BREAST_EXPOSED',
             'FEMALE_GENITALIA_EXPOSED',
-            'FEMALE_BUTTOCKS_EXPOSED',
-            'FEMALE_NIPPLE_EXPOSED',
+            'BUTTOCKS_EXPOSED',
             'MALE_GENITALIA_EXPOSED',
-            'MALE_BUTTOCKS_EXPOSED',
             'ANUS_EXPOSED'
         ]
     },
     'COVERED': {
-        'threshold': 0.4,
+        'threshold': 0.2,
         'classes': [
             'FEMALE_GENITALIA_COVERED',
-            'FEMALE_UNDERWEAR_EXPOSED',
-            'BIKINI',
-            'FEMALE_CLEAVAGE_VISIBLE',
+            'FEMALE_BREAST_COVERED',
             'BUTTOCKS_COVERED',
             'ANUS_COVERED',
-            'MALE_GENITALIA_COVERED',
-            'MALE_UNDERWEAR_EXPOSED'
         ]
     }
 }
 
-# Site-specific threshold rules using regex for both URL and title/text content
+# Site-specific threshold rules using regex for both URL and title/text content for tests  
 SITE_SPECIFIC_RULES = [
      {
         'pattern': r'(?i)(porn|xxx|adult|nsfw|sex|onlyfans|milf|dick|boob|hentai|\.xxx|\.porn|\.adult|reddit\.com\/r\/.*(?:nsfw|porn|gonewild|milf|dick|boob|hentai|onlyfans))',
