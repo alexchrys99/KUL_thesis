@@ -59,6 +59,7 @@ v1.4 simplified version: removed unnecessary non-functional buttons, corrected b
 
 v1.5 Removed Ad-blocking, only necessary parts for detection of visual elements of NSFW elements
 
+only NSFW filtering browser extension
 
 v1.6 removal of extra code Erax_AI_extension_1.6
 
