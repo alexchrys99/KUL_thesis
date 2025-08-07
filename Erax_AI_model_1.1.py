@@ -20,7 +20,7 @@ from collections import defaultdict
 from ultralytics import YOLO
 from huggingface_hub import snapshot_download
 
-# +++ ADDED FOR CONTROL FLAGS +++
+# +++ CONTROL FLAGS +++
 ENABLE_DOMAIN_RULES = False       # Set to False to disable URL/title-based threshold adjustments
 ENABLE_UNSAFE_WORD_CHECK = False   # Set to False to disable alt_text/caption keyword checking
 # +++++++++++++++++++++++++++++++
@@ -58,7 +58,7 @@ UNSAFE_CONTEXT_PATTERNS = [
 ]
 UNSAFE_WORD_THRESHOLD = 0.005
 
-# Create directory structure for saving images
+# Create a directory structure for saving images
 BASE_DIR = r"C:\Users\alexc\Desktop\vsfiles\for_live_browsing\adblock_nsfw_test\some_tests_ext_thr\yolov11"
 THRESHOLD_DIR = f"test_threshold_{DEFAULT_NSFW_THRESHOLD}"
 FULL_DIR = os.path.join(BASE_DIR, THRESHOLD_DIR)
@@ -198,7 +198,7 @@ def predict():
             print(f"Error in image preprocessing: {e}")
             return jsonify({"error": str(e)}), 400
         
-        # <<< CHANGE 2: Apply low threshold if the page is already flagged as high-risk
+      
         if use_low_threshold:
             threshold = UNSAFE_WORD_THRESHOLD 
         else:
@@ -214,7 +214,7 @@ def predict():
                 if match:
                     found_unsafe_word = match.group(0)
                     threshold = min(threshold, UNSAFE_WORD_THRESHOLD)
-                    # <<< CHANGE 3: Set escalate_flag to True if alt text contains a keyword
+                    
                     escalate_flag = True
                     print(f"Unsafe keyword '{found_unsafe_word}' found via regex. Lowering threshold to {threshold} and escalating.")
                     category_stats['Unsafe Word Trigger'] += 1
@@ -242,7 +242,7 @@ def predict():
         
         is_nsfw, highest_conf, detected_class = check_nsfw(detections, threshold)
 
-        # <<< CHANGE 4: Escalate if the model's confidence is high
+        
         if highest_conf > 0.5:
              escalate_flag = True
         
