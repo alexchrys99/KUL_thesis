@@ -1,4 +1,3 @@
-// This line is critical for MV3 session storage access from content scripts
 chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_AND_UNTRUSTED_CONTEXTS' });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
