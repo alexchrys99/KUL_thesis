@@ -64,6 +64,7 @@ only NSFW filtering browser extension
 v1.6 removal of extra code Erax_AI_extension_1.6
 
 The script Erax_AI_model_1.1.py contains the logic of 3 mechanisms for context (apply dynamically low threshold)
+with minimal changes also Nudenet can be used
 
 1) dangerous domains
 2) dangerous alt-text
