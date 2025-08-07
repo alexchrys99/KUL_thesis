@@ -37,7 +37,7 @@ How it works:
 
  
  
- v0.4 is with adblocking rules for blocking youtube ads (In first videos it might show some ads but after initialize, almost never shows ads), gambling sites, porn sites
+ v0.4 is with adblocking rules for blocking youtube ads (In the first videos, it might show some ads but after initialize, almost never shows ads), gambling sites, porn sites
 
 
 v0.7 blocks porn/bet sites and most of youtube adds, dynamic addition of sites to block
@@ -61,11 +61,17 @@ v1.5 Removed Ad-blocking, only necessary parts for detection of visual elements 
 
 only NSFW filtering browser extension
 
+
+
+
+
+
+
 v1.6 removal of extra code Erax_AI_extension_1.6
 
 The script Erax_AI_model_1.1.py contains the logic of 3 mechanisms for context (apply dynamically low threshold)
-with minimal changes also Nudenet can be used
+With minimal changes, also Nudenet can be used
 
 1) dangerous domains
 2) dangerous alt-text
-3) if model detects a class with a high ,reliability then the website becomes dangerouus
+3) If the model detects a class with a high confidence, then the website becomes dangerouus
